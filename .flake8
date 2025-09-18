@@ -1,0 +1,44 @@
+[flake8]
+# Production-ready code quality standards
+max-line-length = 88
+max-complexity = 10
+extend-ignore =
+    # E203: whitespace before ':' (conflicts with black)
+    E203,
+    # W503: line break before binary operator (conflicts with black)
+    W503,
+    # E501: line too long (handled by black)
+    E501
+
+exclude =
+    .git,
+    __pycache__,
+    .pytest_cache,
+    .venv,
+    venv,
+    build,
+    dist,
+    *.egg-info,
+    .benchmarks,
+    migrations
+
+per-file-ignores =
+    # Tests can have longer lines and more complex functions
+    tests/*:E501,C901
+    # Configuration files
+    **/settings.py:E402
+    # CLI scripts
+    cli.py:C901
+
+# Error codes to enforce
+select =
+    E,  # pycodestyle errors
+    W,  # pycodestyle warnings
+    F,  # pyflakes
+    C,  # mccabe complexity
+    N,  # pep8-naming
+
+# Additional quality checks
+docstring-convention = google
+inline-quotes = double
+multiline-quotes = double

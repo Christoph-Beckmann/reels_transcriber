@@ -1,0 +1,251 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "instagram-reels-transcriber"
+version = "1.0.0"
+description = "Desktop application for transcribing Instagram Reels locally using Whisper AI"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Christoph Beckmann", email = "christoph@beckmann.dev"},
+]
+keywords = ["instagram", "transcription", "whisper", "ai", "desktop"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Desktop Environment",
+]
+
+dependencies = [
+    # Core functionality
+    "FreeSimpleGUI==5.2.0",
+    "instaloader==4.14.2",
+    "yt-dlp>=2024.1.0",
+    "moviepy==1.0.3",
+    "faster-whisper>=1.2.0",
+    # Audio processing
+    "numpy>=1.26.0",
+    "scipy>=1.11.1",
+    # System utilities
+    "psutil==5.9.5",
+    "requests>=2.32.0",
+    # Logging and configuration
+    "python-dotenv==1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Development and testing
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+    "pytest-asyncio>=0.21.1",
+    "pytest-timeout>=2.1.0",
+    "pytest-xdist>=3.3.1",
+    "pytest-html>=3.2.0",
+    "pytest-benchmark>=4.0.0",
+    # Code quality tools
+    "black>=23.12.0",
+    "isort>=5.13.0",
+    "flake8>=7.0.0",
+    "flake8-docstrings>=1.7.0",
+    "flake8-bugbear>=23.12.0",
+    "flake8-comprehensions>=3.14.0",
+    "flake8-simplify>=0.21.0",
+    "pylint>=3.0.0",
+    "bandit[toml]>=1.7.6",
+    "pydocstyle[toml]>=6.3.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+
+packaging = [
+    # Build and packaging
+    "pyinstaller==6.1.0",
+]
+
+[project.scripts]
+reels-transcriber = "main:main"
+reels-transcriber-cli = "cli:main"
+
+[project.urls]
+Homepage = "https://github.com/christophbeckmann/instagram-reels-transcriber"
+Documentation = "https://github.com/christophbeckmann/instagram-reels-transcriber/blob/main/README.md"
+Repository = "https://github.com/christophbeckmann/instagram-reels-transcriber.git"
+"Bug Tracker" = "https://github.com/christophbeckmann/instagram-reels-transcriber/issues"
+Changelog = "https://github.com/christophbeckmann/instagram-reels-transcriber/blob/main/CHANGELOG.md"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+markers = [
+    "unit: Unit tests for individual components",
+    "integration: Integration tests for complete workflows",
+    "performance: Performance and benchmark tests",
+    "network: Tests requiring internet connectivity",
+    "real_urls: Tests using real Instagram URLs",
+    "privacy_safe: Tests that handle URLs in privacy-safe manner",
+    "slow: Tests that take significant time to run",
+]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["core", "gui", "utils", "config"]
+omit = [
+    "tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/migrations/*",
+    "venv/*",
+    ".venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\(Protocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+skip_covered = false
+sort = "Cover"
+
+[tool.coverage.html]
+directory = "reports/coverage"
+
+[tool.coverage.xml]
+output = "reports/coverage.xml"
+
+# Quality tools configuration
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "instaloader.*",
+    "whisper.*",
+    "FreeSimpleGUI.*",
+    "cv2.*",
+    "PIL.*",
+    "psutil.*",
+    "moviepy.*",
+    "faster_whisper.*",
+]
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv", "build", "dist"]
+skips = ["B101", "B404", "B603", "B607"]
+
+[tool.bandit.assert_used]
+skips = ["**/test_*.py", "**/tests/**"]
+
+[tool.pydocstyle]
+convention = "google"
+add_ignore = ["D100", "D104", "D105", "D107"]
+match_dir = "(?!tests).*"
+
+[tool.pylint.main]
+load-plugins = [
+    "pylint.extensions.docparams",
+    "pylint.extensions.docstyle",
+    "pylint.extensions.mccabe"
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "line-too-long",
+    "missing-module-docstring",
+    "too-many-instance-attributes",
+    "too-many-public-methods",
+    "import-error",
+    "no-name-in-module",
+]
+
+[tool.pylint.design]
+max-args = 7
+max-locals = 15
+max-returns = 6
+max-branches = 12
+max-statements = 50
+
+[tool.hatch.build.targets.wheel]
+packages = ["core", "gui", "utils", "config"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "B023", # function definition does not bind loop variable
+    "C901", # too complex
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["E712", "E501"]
+
+[tool.black]
+target-version = ['py39']
+line-length = 120
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 120
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-html>=3.2.0",
+    "pytest-timeout>=2.1.0",
+    "pytest-xdist>=3.3.1",
+]

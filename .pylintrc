@@ -1,0 +1,145 @@
+[MAIN]
+# Production-ready pylint configuration
+load-plugins=pylint.extensions.docparams,
+            pylint.extensions.docstyle,
+            pylint.extensions.mccabe
+
+# Ignore patterns
+ignore=CVS,
+       .git,
+       __pycache__,
+       .pytest_cache,
+       .venv,
+       venv,
+       build,
+       dist,
+       *.egg-info,
+       .benchmarks
+
+# Use multiple processes for speed
+jobs=4
+
+[MESSAGES CONTROL]
+# Disable specific warnings for production readiness
+disable=
+    # Overly strict formatting (handled by black)
+    line-too-long,
+    bad-continuation,
+
+    # Development convenience
+    missing-module-docstring,
+
+    # Type hints (handled by mypy)
+    missing-type-doc,
+    missing-return-type-doc,
+
+    # Allow TODO comments in development
+    fixme,
+
+    # GUI-specific allowances
+    too-many-instance-attributes,
+    too-many-public-methods,
+
+    # External library compatibility
+    import-error,
+    no-name-in-module
+
+# Enable important quality checks
+enable=
+    # Security and robustness
+    dangerous-default-value,
+    unused-variable,
+    unused-argument,
+    broad-except,
+
+    # Code quality
+    duplicate-code,
+    unused-import,
+    redefined-outer-name,
+
+    # Documentation
+    missing-function-docstring,
+    missing-class-docstring
+
+[REPORTS]
+# Disable reports for cleaner output
+reports=no
+
+# Output format
+output-format=text
+
+[REFACTORING]
+# Maximum number of nested blocks
+max-nested-blocks=5
+
+[DESIGN]
+# Quality thresholds for production code
+max-args=7
+max-locals=15
+max-returns=6
+max-branches=12
+max-statements=50
+max-parents=7
+max-attributes=10
+max-public-methods=20
+min-public-methods=1
+
+[SIMILARITIES]
+# Minimum lines number of a similarity
+min-similarity-lines=4
+
+# Ignore comments when computing similarities
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities
+ignore-imports=no
+
+[SPELLING]
+# Spelling checker
+spelling-dict=
+spelling-ignore-words=
+
+[TYPECHECK]
+# Allow dynamic attributes for GUI frameworks
+generated-members=
+    PyQt5.*,
+    PyQt6.*,
+    tkinter.*,
+    FreeSimpleGUI.*
+
+# Ignore missing imports for optional dependencies
+ignored-modules=
+    instaloader,
+    whisper,
+    cv2,
+    PIL,
+    PyQt5,
+    PyQt6
+
+[VARIABLES]
+# Dummy variables regex (don't warn on these)
+dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
+
+# Additional variable naming patterns
+argument-naming-style=snake_case
+attr-naming-style=snake_case
+class-attribute-naming-style=any
+class-naming-style=PascalCase
+const-naming-style=UPPER_CASE
+function-naming-style=snake_case
+method-naming-style=snake_case
+module-naming-style=snake_case
+variable-naming-style=snake_case
+
+[FORMAT]
+# Expected format of line ending
+expected-line-ending-format=LF
+
+# Maximum line length
+max-line-length=88
+
+# Number of spaces of indent required
+indent-string='    '

@@ -1,0 +1,36 @@
+# Minimal non-conflicting pre-commit hooks for initial commit
+repos:
+  # Ruff - Modern Python linting and formatting (replaces Black, isort, flake8)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      # Run linter first with auto-fix
+      - id: ruff
+        args: [--fix]
+      # Then run formatter
+      - id: ruff-format
+
+  # Basic file quality checks (non-modifying)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: debug-statements
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+
+  # Spell checking (non-modifying)
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.26.8
+    hooks:
+      - id: typos
+        exclude: ^(tests/fixtures/|\.venv/|uv\.lock)
+
+# Global settings
+default_language_version:
+  python: python3.11
