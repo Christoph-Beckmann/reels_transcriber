@@ -192,6 +192,16 @@ MODELS = {
         'url': 'https://openaipublic.azureedge.net/main/whisper/models/9ecf779972d90ba49c06d968637d720dd632c55bbf19d441fb42bf17a411e794/small.pt',
         'size_mb': 244,
         'sha256': '9ecf779972d90ba49c06d968637d720dd632c55bbf19d441fb42bf17a411e794'
+    },
+    'medium': {
+        'url': 'https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt',
+        'size_mb': 769,
+        'sha256': '345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1'
+    },
+    'large': {
+        'url': 'https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6884409c/large-v2.pt',
+        'size_mb': 1550,
+        'sha256': '81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6884409c'
     }
 }
 

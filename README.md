@@ -30,7 +30,9 @@ Think of it like this: You know how YouTube can show captions for videos? This d
 Download this app to your computer (click the green "Code" button above and select "Download ZIP", then unzip it anywhere you like)
 
 ### Step 2: Run the Magic Installer ✨
-Open the folder you just downloaded and find a file called `install.sh`. Double-click it!
+**Mac users**: Double-click `install.command` (this actually works with double-click!)
+**Windows users**: Double-click `install.bat`
+**Linux/Terminal users**: Run `./install.sh` in Terminal
 
 **That's it!** The installer is like a helpful robot that:
 - 🤖 Checks if your computer has everything it needs
@@ -43,7 +45,7 @@ Open the folder you just downloaded and find a file called `install.sh`. Double-
 ### Step 3: Start Using It! 🎉
 Look for files called:
 - **Windows users**: Double-click `run_app.bat`
-- **Mac users**: Double-click `run_app.sh`
+- **Mac users**: Double-click `run_app.command`
 
 **Congratulations!** The app should open and you're ready to turn videos into text!
 
@@ -65,7 +67,7 @@ Look for files called:
 
 1. **Double-click the right file for your computer:**
    - Windows: Double-click `run_app.bat`
-   - Mac: Double-click `run_app.sh`
+   - Mac: Double-click `run_app.command`
 
 2. **A window opens - this is your transcription app!**
 
@@ -81,7 +83,11 @@ Look for files called:
 
 5. **Choose your settings (or just leave them as-is):**
    - **Speed vs Quality**: "Base" is perfect for most people
-     - Think of it like photo quality: "Tiny" = super fast but okay quality, "Large" = slow but amazing quality
+     - **Tiny** (39MB): Super fast, okay quality
+     - **Base** (74MB): Good balance (default) ✅
+     - **Small** (244MB): Better quality, slower
+     - **Medium** (769MB): High quality transcription
+     - **Large** (1550MB): Best quality, slowest
    - **Language**: Usually "Auto-detect" works great
 
 6. **Click "Start Transcription"**
@@ -99,28 +105,28 @@ Look for files called:
 
 **Don't panic!** Here are the most common issues and super simple fixes:
 
-### "I double-clicked install.sh but nothing happened"
+### "I double-clicked but nothing happened"
 
 **On Mac:**
-- Right-click on `install.sh` instead
-- Choose "Open With" → "Terminal"
-- If it says "permission denied," try this first:
-  ```bash
-  chmod +x install.sh
-  ```
+- Double-click `install.command` (not install.sh)
+- If that doesn't work, right-click `install.command` and choose "Open"
+- For Terminal users: Run `./install.sh` directly
 
 **On Windows:**
-- First, make sure you have Python installed from [python.org](https://www.python.org/downloads/)
-- Then try double-clicking `install.sh` or open Command Prompt and type:
+- Double-click `install.bat` (not install.sh)
+- If that doesn't work, make sure Python is installed from [python.org](https://www.python.org/downloads/)
+- Then open Command Prompt and run:
   ```bash
-  bash install.sh
+  install.bat
   ```
 
 ### "The app won't start when I double-click the run file"
 
 This usually means the installation didn't finish completely. Try this:
 
-1. **Re-run the installer:** Double-click `install.sh` again
+1. **Re-run the installer:**
+   - Mac: Double-click `install.command`
+   - Windows: Double-click `install.bat`
 2. **Wait for it to completely finish** (you'll see "Installation complete!" or similar)
 3. **Then try the run file again**
 
@@ -300,6 +306,11 @@ uv pip install package-name && uv pip freeze > requirements.txt
 
 ### Configuration
 Edit `config/settings.py` to customize default model size, timeouts, languages, and logging levels.
+
+To change the default Whisper model that gets downloaded during installation, edit line 178 in `install.sh`:
+```python
+MODEL_SIZE = "base"  # Change to: tiny, small, medium, or large
+```
 
 </details>
 
