@@ -174,8 +174,81 @@ from pathlib import Path
 import sys
 import time
 
-# Model selection
-MODEL_SIZE = "large"  # Options: tiny (39MB), base (74MB), small (244MB), medium (769MB), large (1550MB)
+# Model selection - Interactive menu
+print("\n" + "="*60)
+print("🧠 Choose Whisper AI Model Size")
+print("="*60)
+print("Different model sizes offer different trade-offs between speed, accuracy, and disk space:")
+print()
+print("1. 🚀 Tiny    (39MB)   - Fastest, good for testing")
+print("2. ⚡ Base    (74MB)   - Good balance (recommended)")
+print("3. 📈 Small   (244MB)  - Better accuracy, slower")
+print("4. 🎯 Medium  (769MB)  - High accuracy, much slower")
+print("5. 🏆 Large   (1550MB) - Best accuracy, very slow")
+print()
+print("💡 Recommendation: Choose 'Base' for most users, 'Large' for best quality")
+print("="*60)
+
+while True:
+    try:
+        choice = input("Enter your choice (1-5) [default: 2 for Base]: ").strip()
+
+        # Default to base if nothing entered
+        if not choice:
+            choice = "2"
+
+        choice_num = int(choice)
+
+        if choice_num == 1:
+            MODEL_SIZE = "tiny"
+            print(f"✅ Selected: Tiny model (39MB) - Fast processing")
+            break
+        elif choice_num == 2:
+            MODEL_SIZE = "base"
+            print(f"✅ Selected: Base model (74MB) - Recommended balance")
+            break
+        elif choice_num == 3:
+            MODEL_SIZE = "small"
+            print(f"✅ Selected: Small model (244MB) - Better accuracy")
+            break
+        elif choice_num == 4:
+            MODEL_SIZE = "medium"
+            print(f"✅ Selected: Medium model (769MB) - High accuracy")
+            break
+        elif choice_num == 5:
+            MODEL_SIZE = "large"
+            print(f"✅ Selected: Large model (1550MB) - Best accuracy")
+            break
+        else:
+            print("❌ Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+            continue
+
+    except ValueError:
+        print("❌ Invalid input. Please enter a number between 1 and 5.")
+        continue
+    except KeyboardInterrupt:
+        print("\n\n⚠️  Installation cancelled by user.")
+        sys.exit(1)
+
+print(f"🎯 Will download {MODEL_SIZE} model ({MODELS[MODEL_SIZE]['size_mb']}MB)")
+print()
+
+# Save model selection to configuration file
+import json
+
+config_data = {
+    "whisper_model": MODEL_SIZE
+}
+
+config_path = Path("config.json")
+try:
+    with open(config_path, "w") as f:
+        json.dump(config_data, f, indent=2)
+    print(f"💾 Saved model selection to {config_path}")
+except Exception as e:
+    print(f"⚠️  Warning: Could not save config ({e}), but continuing installation...")
+
+print()
 
 MODELS = {
     'tiny': {

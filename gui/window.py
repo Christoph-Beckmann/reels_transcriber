@@ -38,12 +38,13 @@ class MainWindow:
     Enhanced with comprehensive error handling and user feedback.
     """
 
-    def __init__(self, title: str = "Instagram Reels Transcriber"):
+    def __init__(self, title: str = "Instagram Reels Transcriber", config=None):
         """
         Initialize the main window.
 
         Args:
             title: Window title
+            config: Configuration object (uses DEFAULT_CONFIG if not provided)
         """
         if not GUI_AVAILABLE:
             raise RuntimeError("GUI library not available. Please install FreeSimpleGUI: pip install FreeSimpleGUI")
@@ -57,8 +58,9 @@ class MainWindow:
         self.processing_timer = ProcessingTimer()
         self.last_error_details: Optional[ErrorDetails] = None
 
-        # Initialize worker
-        self.worker = ProcessingWorker(self.message_queue, DEFAULT_CONFIG.to_dict())
+        # Initialize worker with provided config or default
+        config_dict = config.to_dict() if config else DEFAULT_CONFIG.to_dict()
+        self.worker = ProcessingWorker(self.message_queue, config_dict)
 
         # Configure GUI theme and settings
         sg.theme("LightBlue3")  # Professional, clean theme
