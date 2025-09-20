@@ -175,7 +175,7 @@ import sys
 import time
 
 # Model selection
-MODEL_SIZE = "base"  # Options: tiny (39MB), base (74MB), small (244MB), medium (769MB), large (1550MB)
+MODEL_SIZE = "large"  # Options: tiny (39MB), base (74MB), small (244MB), medium (769MB), large (1550MB)
 
 MODELS = {
     'tiny': {
