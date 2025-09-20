@@ -164,17 +164,94 @@ else
 fi
 echo
 
-# Step 5: Download Whisper model
+# Step 5: Whisper AI Model Selection
 echo "📦 Step 5: Whisper AI Model"
 echo "───────────────────────────"
-python3.12 << 'PYTHON_SCRIPT'
+
+# Model selection - Interactive menu (in bash, not Python)
+echo
+echo "============================================================"
+echo "🧠 Choose Whisper AI Model Size"
+echo "============================================================"
+echo "Different model sizes offer different trade-offs between speed, accuracy, and disk space:"
+echo
+echo "1. 🚀 Tiny    (39MB)   - Fastest, good for testing"
+echo "2. ⚡ Base    (74MB)   - Good balance (recommended)"
+echo "3. 📈 Small   (244MB)  - Better accuracy, slower"
+echo "4. 🎯 Medium  (769MB)  - High accuracy, much slower"
+echo "5. 🏆 Large   (1550MB) - Best accuracy, very slow"
+echo
+echo "💡 Recommendation: Choose 'Base' for most users, 'Large' for best quality"
+echo "============================================================"
+
+# Check if we should force non-interactive mode (for CI/CD environments)
+if [[ "${CI}" == "true" ]] || [[ "${GITHUB_ACTIONS}" == "true" ]] || [[ "${GITLAB_CI}" == "true" ]] || [[ -n "${JENKINS_URL}" ]] || [[ "${BUILDKITE}" == "true" ]] || [[ "${CIRCLECI}" == "true" ]] || [[ -n "${WHISPER_MODEL_AUTO}" ]]; then
+    # Auto-select model for CI/CD
+    MODEL_SIZE="${WHISPER_MODEL_AUTO:-base}"
+    echo "🤖 CI/CD environment detected - using $MODEL_SIZE model"
+    echo "💡 Set WHISPER_MODEL_AUTO=tiny|base|small|medium|large to choose different model"
+else
+    # Interactive mode: show menu and get user choice
+    echo "📝 Please make your selection..."
+    read -p "Enter your choice (1-5) [default: 2 for Base]: " choice
+
+    # Default to base if nothing entered
+    if [[ -z "$choice" ]]; then
+        choice="2"
+    fi
+
+    case $choice in
+        1)
+            MODEL_SIZE="tiny"
+            echo "✅ Selected: Tiny model (39MB) - Fast processing"
+            ;;
+        2)
+            MODEL_SIZE="base"
+            echo "✅ Selected: Base model (74MB) - Recommended balance"
+            ;;
+        3)
+            MODEL_SIZE="small"
+            echo "✅ Selected: Small model (244MB) - Better accuracy"
+            ;;
+        4)
+            MODEL_SIZE="medium"
+            echo "✅ Selected: Medium model (769MB) - High accuracy"
+            ;;
+        5)
+            MODEL_SIZE="large"
+            echo "✅ Selected: Large model (1550MB) - Best accuracy"
+            ;;
+        *)
+            echo "❌ Invalid choice, using default Base model"
+            MODEL_SIZE="base"
+            ;;
+    esac
+fi
+
+echo
+echo "🎯 Will download $MODEL_SIZE model"
+
+# Save model selection to configuration file
+cat > config.json << EOF
+{
+  "whisper_model": "$MODEL_SIZE"
+}
+EOF
+echo "💾 Saved model selection to config.json"
+echo
+
+python3.12 << PYTHON_SCRIPT
 import urllib.request
 import hashlib
 from pathlib import Path
 import sys
 import time
+import os
 
-# Define MODELS dictionary first
+# Get MODEL_SIZE from environment (set by bash script above)
+MODEL_SIZE = "$MODEL_SIZE"
+
+# Define MODELS dictionary
 MODELS = {
     'tiny': {
         'url': 'https://openaipublic.azureedge.net/main/whisper/models/65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9/tiny.pt',
@@ -203,95 +280,7 @@ MODELS = {
     }
 }
 
-# Model selection - Interactive menu
-print("\n" + "="*60)
-print("🧠 Choose Whisper AI Model Size")
-print("="*60)
-print("Different model sizes offer different trade-offs between speed, accuracy, and disk space:")
-print()
-print("1. 🚀 Tiny    (39MB)   - Fastest, good for testing")
-print("2. ⚡ Base    (74MB)   - Good balance (recommended)")
-print("3. 📈 Small   (244MB)  - Better accuracy, slower")
-print("4. 🎯 Medium  (769MB)  - High accuracy, much slower")
-print("5. 🏆 Large   (1550MB) - Best accuracy, very slow")
-print()
-print("💡 Recommendation: Choose 'Base' for most users, 'Large' for best quality")
-print("="*60)
-
-# Check if we should force non-interactive mode (for CI/CD environments)
-import os
-import sys
-
-# Force non-interactive if specific environment variables are set OR if there's no TTY
-force_non_interactive = (
-    os.environ.get('CI') == 'true' or  # GitHub Actions, GitLab CI, etc.
-    os.environ.get('GITHUB_ACTIONS') == 'true' or
-    os.environ.get('GITLAB_CI') == 'true' or
-    os.environ.get('JENKINS_URL') is not None or
-    os.environ.get('BUILDKITE') == 'true' or
-    os.environ.get('CIRCLECI') == 'true' or
-    os.environ.get('WHISPER_MODEL_AUTO') is not None  # Allow manual override
-)
-
-if force_non_interactive:
-    # Auto-select model for CI/CD
-    MODEL_SIZE = os.environ.get('WHISPER_MODEL_AUTO', 'base')
-    print(f"🤖 CI/CD environment detected - using {MODEL_SIZE} model")
-    print("💡 Set WHISPER_MODEL_AUTO=tiny|base|small|medium|large to choose different model")
-else:
-    # Interactive mode: show menu and get user choice
-    print("📝 Please make your selection...")
-    try:
-        choice = input("Enter your choice (1-5) [default: 2 for Base]: ").strip()
-
-        # Default to base if nothing entered
-        if not choice:
-            choice = "2"
-
-        choice_num = int(choice)
-
-        if choice_num == 1:
-            MODEL_SIZE = "tiny"
-            print(f"✅ Selected: Tiny model (39MB) - Fast processing")
-        elif choice_num == 2:
-            MODEL_SIZE = "base"
-            print(f"✅ Selected: Base model (74MB) - Recommended balance")
-        elif choice_num == 3:
-            MODEL_SIZE = "small"
-            print(f"✅ Selected: Small model (244MB) - Better accuracy")
-        elif choice_num == 4:
-            MODEL_SIZE = "medium"
-            print(f"✅ Selected: Medium model (769MB) - High accuracy")
-        elif choice_num == 5:
-            MODEL_SIZE = "large"
-            print(f"✅ Selected: Large model (1550MB) - Best accuracy")
-        else:
-            print("❌ Invalid choice, using default Base model")
-            MODEL_SIZE = "base"
-
-    except (ValueError, EOFError, KeyboardInterrupt) as e:
-        print(f"\n🤖 Input error ({type(e).__name__}) - using default Base model (74MB)")
-        print("💡 For automated installations, set WHISPER_MODEL_AUTO=model_name")
-        MODEL_SIZE = "base"
-
-print(f"\n🎯 Will download {MODEL_SIZE} model ({MODELS[MODEL_SIZE]['size_mb']}MB)")
-
-# Save model selection to configuration file
-import json
-
-config_data = {
-    "whisper_model": MODEL_SIZE
-}
-
-config_path = Path("config.json")
-try:
-    with open(config_path, "w") as f:
-        json.dump(config_data, f, indent=2)
-    print(f"💾 Saved model selection to {config_path}")
-except Exception as e:
-    print(f"⚠️  Warning: Could not save config ({e}), but continuing installation...")
-
-print()
+print(f"📥 Downloading {MODEL_SIZE} model ({MODELS[MODEL_SIZE]['size_mb']}MB)...")
 
 model_info = MODELS[MODEL_SIZE]
 
