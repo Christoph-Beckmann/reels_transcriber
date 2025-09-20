@@ -274,9 +274,9 @@ MODELS = {
         'sha256': '345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1'
     },
     'large': {
-        'url': 'https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6884409c/large-v2.pt',
-        'size_mb': 1550,
-        'sha256': '81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6884409c'
+        'url': 'https://openaipublic.azureedge.net/main/whisper/models/e5b1a55b89c1367dacf97e3e19bfd829a01529dbfdeefa8caeb59b3f1b81dadb/large-v3.pt',
+        'size_mb': 2945,
+        'sha256': 'e5b1a55b89c1367dacf97e3e19bfd829a01529dbfdeefa8caeb59b3f1b81dadb'
     }
 }
 
