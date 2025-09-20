@@ -459,7 +459,9 @@ def execute_with_progress_and_error_handling(
         raise
     except Exception as e:
         # Handle all other exceptions
-        return handle_operation_error(e, operation_name, f"During {stage.value}")
+        # Safely get stage value, handling cases where stage might not be a proper enum
+        stage_value = getattr(stage, 'value', str(stage)) if stage is not None else 'unknown_stage'
+        return handle_operation_error(e, operation_name, f"During {stage_value}")
 
 
 def create_session_directory(base_dir: Union[str, Path], prefix: str = "session") -> Path:

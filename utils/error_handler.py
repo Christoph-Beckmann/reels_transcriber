@@ -433,9 +433,12 @@ class UserFeedbackManager:
             error_details.metadata["user_action"] = user_action
 
         # Log the user-friendly classification
+        # Safely get enum values, handling cases where they might not be proper enums
+        category_value = getattr(error_details.category, 'value', str(error_details.category)) if error_details.category is not None else 'unknown_category'
+        severity_value = getattr(error_details.severity, 'value', str(error_details.severity)) if error_details.severity is not None else 'unknown_severity'
         logger.info(
-            f"Error classified as {error_details.category.value} "
-            f"(severity: {error_details.severity.value}, "
+            f"Error classified as {category_value} "
+            f"(severity: {severity_value}, "
             f"code: {error_details.error_code})"
         )
 

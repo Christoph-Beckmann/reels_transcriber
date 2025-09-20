@@ -329,8 +329,10 @@ class OptimizedTranscriptionPipeline:
         """Execute optimized pipeline with parallel processing."""
         with self._lock:
             if self._state != PipelineState.IDLE:
+                # Safely get state value, handling cases where state might not be a proper enum
+                state_value = getattr(self._state, 'value', str(self._state)) if self._state is not None else 'unknown_state'
                 return OptimizedPipelineResult(
-                    success=False, error_message=f"Pipeline already running (state: {self._state.value})"
+                    success=False, error_message=f"Pipeline already running (state: {state_value})"
                 )
 
             self._state = PipelineState.RUNNING
@@ -711,11 +713,13 @@ class OptimizedTranscriptionPipeline:
         with self._lock:
             self._state = PipelineState.CANCELLED
 
+        # Safely get stage value, handling cases where stage might not be a proper enum
+        stage_value = getattr(self._current_stage, 'value', str(self._current_stage)) if self._current_stage is not None else 'unknown_stage'
         return OptimizedPipelineResult(
             success=False,
             execution_time=execution_time,
             stages_completed=self._stages_completed,
-            error_message=f"Pipeline cancelled during {self._current_stage.value}",
+            error_message=f"Pipeline cancelled during {stage_value}",
         )
 
     # Public interface methods

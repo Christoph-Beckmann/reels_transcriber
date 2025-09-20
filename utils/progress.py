@@ -85,7 +85,9 @@ class ProgressTracker:
         # Create progress update
         update = ProgressUpdate(stage=stage, progress=self.current_progress, message=message, details=details)
 
-        logger.debug(f"Progress update: {stage.value} - {self.current_progress}% - {message}")
+        # Safely get stage value, handling cases where stage might not be a proper enum
+        stage_value = getattr(stage, 'value', str(stage)) if stage is not None else 'unknown_stage'
+        logger.debug(f"Progress update: {stage_value} - {self.current_progress}% - {message}")
 
         # Call update callback if provided
         if self.update_callback:
