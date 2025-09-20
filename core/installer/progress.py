@@ -115,7 +115,9 @@ class ProgressTracker:
             step: The installation step to start
         """
         self.current_step += 1
-        step_name, step_desc = step.value
+        # Safely get step value, handling cases where step might not be a proper enum
+        step_value = getattr(step, 'value', (str(step), 'Unknown step')) if step is not None else ('unknown_step', 'Unknown step')
+        step_name, step_desc = step_value if isinstance(step_value, tuple) and len(step_value) >= 2 else (str(step_value), 'Unknown step')
 
         if RICH_AVAILABLE and self.progress:
             # Update overall progress

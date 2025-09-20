@@ -57,7 +57,9 @@ class EnhancedErrorDialog:
             }
 
             icon = severity_icon.get(error_details.severity, "❌")
-            title = f"{icon} {error_details.severity.value.title()}: {parent_title}"
+            # Safely get severity value, handling cases where severity might not be a proper enum
+            severity_value = getattr(error_details.severity, 'value', str(error_details.severity)) if error_details.severity is not None else 'unknown_severity'
+            title = f"{icon} {severity_value.title()}: {parent_title}"
 
             # Build dialog layout
             layout = [
@@ -196,8 +198,9 @@ class EnhancedErrorDialog:
 
         report_info = [
             f"Error Code: {error_details.error_code or 'N/A'}",
-            f"Category: {error_details.category.value}",
-            f"Severity: {error_details.severity.value}",
+            # Safely get enum values, handling cases where they might not be proper enums
+            f"Category: {getattr(error_details.category, 'value', str(error_details.category)) if error_details.category is not None else 'unknown_category'}",
+            f"Severity: {getattr(error_details.severity, 'value', str(error_details.severity)) if error_details.severity is not None else 'unknown_severity'}",
             f"Technical Details: {error_details.technical_details}",
             "",
             "System Information:",

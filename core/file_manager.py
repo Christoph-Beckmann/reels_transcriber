@@ -54,7 +54,8 @@ class ManagedFile:
         """Convert to dictionary for logging."""
         return {
             "path": str(self.path),
-            "type": self.file_type.value,
+            # Safely get file type value, handling cases where file_type might not be a proper enum
+            "type": getattr(self.file_type, 'value', str(self.file_type)) if self.file_type is not None else 'unknown_type',
             "session_id": self.session_id,
             "cleanup_on_exit": self.cleanup_on_exit,
             "exists": self.path.exists(),
@@ -315,7 +316,9 @@ class RefactoredTempFileManager:
 
             self.managed_files[file_id] = managed_file
 
-            logger.debug(f"Generated temp path: {file_path} (type: {file_type.value})")
+            # Safely get file type value, handling cases where file_type might not be a proper enum
+            file_type_value = getattr(file_type, 'value', str(file_type)) if file_type is not None else 'unknown_type'
+            logger.debug(f"Generated temp path: {file_path} (type: {file_type_value})")
             return str(file_path)
 
     def track_file(
@@ -351,7 +354,9 @@ class RefactoredTempFileManager:
 
             self.managed_files[file_id] = managed_file
 
-            logger.debug(f"Tracking file: {file_path} (ID: {file_id}, type: {file_type.value})")
+            # Safely get file type value, handling cases where file_type might not be a proper enum
+            file_type_value = getattr(file_type, 'value', str(file_type)) if file_type is not None else 'unknown_type'
+            logger.debug(f"Tracking file: {file_path} (ID: {file_id}, type: {file_type_value})")
             return file_id
 
     def untrack_file(self, file_id: str) -> bool:
