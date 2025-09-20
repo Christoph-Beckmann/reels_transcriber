@@ -189,46 +189,74 @@ print()
 print("💡 Recommendation: Choose 'Base' for most users, 'Large' for best quality")
 print("="*60)
 
-while True:
-    try:
-        choice = input("Enter your choice (1-5) [default: 2 for Base]: ").strip()
+# Check if we should force non-interactive mode (for CI/CD environments)
+import os
+import sys
 
-        # Default to base if nothing entered
-        if not choice:
-            choice = "2"
+# Force non-interactive if specific environment variables are set
+force_non_interactive = (
+    os.environ.get('CI') == 'true' or  # GitHub Actions, GitLab CI, etc.
+    os.environ.get('GITHUB_ACTIONS') == 'true' or
+    os.environ.get('GITLAB_CI') == 'true' or
+    os.environ.get('JENKINS_URL') is not None or
+    os.environ.get('BUILDKITE') == 'true' or
+    os.environ.get('CIRCLECI') == 'true' or
+    os.environ.get('WHISPER_MODEL_AUTO') is not None  # Allow manual override
+)
 
-        choice_num = int(choice)
+if force_non_interactive:
+    # Auto-select model for CI/CD
+    MODEL_SIZE = os.environ.get('WHISPER_MODEL_AUTO', 'base')
+    print(f"🤖 CI/CD environment detected - using {MODEL_SIZE} model")
+    print("💡 Set WHISPER_MODEL_AUTO=tiny|base|small|medium|large to choose different model")
+else:
+    # Interactive mode: show menu and get user choice
+    while True:
+        try:
+            choice = input("Enter your choice (1-5) [default: 2 for Base]: ").strip()
 
-        if choice_num == 1:
-            MODEL_SIZE = "tiny"
-            print(f"✅ Selected: Tiny model (39MB) - Fast processing")
-            break
-        elif choice_num == 2:
-            MODEL_SIZE = "base"
-            print(f"✅ Selected: Base model (74MB) - Recommended balance")
-            break
-        elif choice_num == 3:
-            MODEL_SIZE = "small"
-            print(f"✅ Selected: Small model (244MB) - Better accuracy")
-            break
-        elif choice_num == 4:
-            MODEL_SIZE = "medium"
-            print(f"✅ Selected: Medium model (769MB) - High accuracy")
-            break
-        elif choice_num == 5:
-            MODEL_SIZE = "large"
-            print(f"✅ Selected: Large model (1550MB) - Best accuracy")
-            break
-        else:
-            print("❌ Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+            # Default to base if nothing entered
+            if not choice:
+                choice = "2"
+
+            choice_num = int(choice)
+
+            if choice_num == 1:
+                MODEL_SIZE = "tiny"
+                print(f"✅ Selected: Tiny model (39MB) - Fast processing")
+                break
+            elif choice_num == 2:
+                MODEL_SIZE = "base"
+                print(f"✅ Selected: Base model (74MB) - Recommended balance")
+                break
+            elif choice_num == 3:
+                MODEL_SIZE = "small"
+                print(f"✅ Selected: Small model (244MB) - Better accuracy")
+                break
+            elif choice_num == 4:
+                MODEL_SIZE = "medium"
+                print(f"✅ Selected: Medium model (769MB) - High accuracy")
+                break
+            elif choice_num == 5:
+                MODEL_SIZE = "large"
+                print(f"✅ Selected: Large model (1550MB) - Best accuracy")
+                break
+            else:
+                print("❌ Invalid choice. Please enter 1, 2, 3, 4, or 5.")
+                continue
+
+        except ValueError:
+            print("❌ Invalid input. Please enter a number between 1 and 5.")
             continue
-
-    except ValueError:
-        print("❌ Invalid input. Please enter a number between 1 and 5.")
-        continue
-    except KeyboardInterrupt:
-        print("\n\n⚠️  Installation cancelled by user.")
-        sys.exit(1)
+        except KeyboardInterrupt:
+            print("\n\n⚠️  Installation cancelled by user.")
+            sys.exit(1)
+        except EOFError:
+            # Handle EOF gracefully - fallback to default
+            print("\n🤖 EOF detected - using default Base model (74MB)")
+            print("💡 For automated installations, set CI=true or WHISPER_MODEL_AUTO=model_name")
+            MODEL_SIZE = "base"
+            break
 
 print(f"🎯 Will download {MODEL_SIZE} model ({MODELS[MODEL_SIZE]['size_mb']}MB)")
 print()
